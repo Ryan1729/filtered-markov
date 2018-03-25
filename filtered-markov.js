@@ -7,20 +7,10 @@ var FilteredMarkov = (function() {
     var generateLines = function(inputString) {
         var lines = inputString.split(/\r?\n/);
         
-        var lineSet = lines.reduce(function (acc, line) {
-                    acc[line] = true;
-                    return acc;
-                }, {});
+        var bundle = dedupStringArrayAndReturnSet(lines);
         
-        
-        var linesWithoutDuplicates = [];
-        for (var line in lineSet) {
-            if (!lineSet.hasOwnProperty(line)) {
-                continue;
-            }
-            
-            linesWithoutDuplicates.push(line);
-        }
+        var lineSet = bundle.set;
+        var linesWithoutDuplicates = bundle.array;
         
         var graph = generateGraph(linesWithoutDuplicates);
         
@@ -78,7 +68,7 @@ var FilteredMarkov = (function() {
             addTokens(allTokens, tokens);
         }
         
-        return allTokens;
+        return allTokens.map(dedupStringArray);
     }
     
     var getGraphFromTokens = function (tokens) {
@@ -103,6 +93,32 @@ var FilteredMarkov = (function() {
             }
             
             allTokens[i].push(newTokens[i]);
+        }
+    }
+    
+    var dedupStringArray = function (array) {
+        return dedupStringArrayAndReturnSet(array).array
+    };
+    
+    var dedupStringArrayAndReturnSet = function (array) {
+        var set = array.reduce(function (acc, str) {
+                    acc[str] = true;
+                    return acc;
+                }, {});
+        
+        
+        var filteredArray = [];
+        for (var str in set) {
+            if (!set.hasOwnProperty(str)) {
+                continue;
+            }
+            
+            filteredArray.push(str);
+        }
+        
+        return {
+            array: filteredArray,
+            set: set
         }
     }
     
