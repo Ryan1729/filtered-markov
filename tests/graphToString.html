@@ -1,0 +1,83 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Filtered Markov Test</title>
+</head>
+
+<body>
+    <div>
+        Result:
+        <div>
+            <textarea id="output"></textarea>
+        </div>
+    </div>
+    Expected Result:
+        <div>
+            <textarea id="expected">
+                A2
+                A3
+                B1
+                B3
+                C2
+                C3
+            </textarea>
+        </div>
+    <div>
+        Test Data:
+        <div>
+            <textarea id="input">
+                [
+                    {
+                        "value": "A", 
+                        "children": [
+                            {
+                                "value": "2"
+                            },
+                            {
+                                "value": "3"
+                            }
+                        ]
+                    },
+                    {
+                        "value": "B", 
+                        "children": [
+                            {
+                                "value": "1"
+                            },
+                            {
+                                "value": "3"
+                            }
+                        ]
+                    },
+                    {
+                        "value": "C", 
+                        "children": [
+                            {
+                                "value": "1"
+                            },
+                            {
+                                "value": "2"
+                            }
+                        ]
+                    }
+                ]
+            </textarea>
+        </div>
+        <button type="button" onclick="test_graphToString()">Test graphToString</button>
+    </div>
+    <script src="../filtered-markov.js"></script>
+    <script>
+        function test_graphToString() {
+            "use strict";
+            var input = document.getElementById("input");
+            var output = document.getElementById("output");
+            
+            var result = FilteredMarkov.graphToString(JSON.parse(input.value));
+            output.value = result;
+        }
+    </script>
+</body>
+</html>
