@@ -1,33 +1,49 @@
 var FilteredMarkov = (function() {
     "use strict";
     var generate = function(inputString) {
-        var lines = inputString.split(/\r?\n/);
-        
-        var graph = generateGraph(lines);
-        
-        var resultString = graphToString(graph, lines);
-        
-        return resultString;
+        return generateLines(inputString).join("\n");
     };
     
-    var graphToString = function(graph, lines) {
-        var resultLines = [];
+    var generateLines = function(inputString) {
+        var lines = inputString.split(/\r?\n/);
         
-        graphToStringHelper(graph, "", resultLines);
-        
-        var linesSet = lines 
-            ?   lines.reduce(function (acc, line) {
+        var lineSet = lines.reduce(function (acc, line) {
                     acc[line] = true;
                     return acc;
-                }, {})
-            :   {};
+                }, {});
+        
+        
+        var linesWithoutDuplicates = [];
+        for (var line in lineSet) {
+            if (!lineSet.hasOwnProperty(line)) {
+                continue;
+            }
+            
+            linesWithoutDuplicates.push(line);
+        }
+        
+        var graph = generateGraph(linesWithoutDuplicates);
+        
+        var resultLines = graphToLines(graph, lineSet);
+        
+        return resultLines;
+    }
+    
+    var graphToString = function(graph, linesSet) {
+        return graphToLines(graph, linesSet).join("\n");
+    };
+    
+    var graphToLines = function(graph, linesSet) {
+        var resultLines = [];
+        
+        graphToLinesHelper(graph, "", resultLines);
         
         return resultLines.filter(function(line) {
             return !linesSet[line];
-        }).join("\n");
-    };
+        });
+    }
     
-    var graphToStringHelper = function (graph, prefix, result) {
+    var graphToLinesHelper = function (graph, prefix, result) {
         if (!graph || graph.length <= 0) {
             result.push(prefix);
             return;
@@ -41,7 +57,7 @@ var FilteredMarkov = (function() {
                 :   child.value;
             
             
-            graphToStringHelper(child.children, newPrefix, result)
+            graphToLinesHelper(child.children, newPrefix, result)
         }
     }
     
@@ -92,7 +108,9 @@ var FilteredMarkov = (function() {
     
     return {
         generate: generate,
+        generateLines: generateLines,
         graphToString, graphToString,
+        graphToLines, graphToLines,
         generateGraph: generateGraph,
         getGraphFromTokens: getGraphFromTokens,
         getAllTokensFromLines: getAllTokensFromLines,

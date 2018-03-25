@@ -11,28 +11,222 @@
     <div id="output-div" style="display: none;">
         Result:
         <div>
-            <textarea id="output"></textarea>
+            <textarea 
+                id="output"
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="off"
+                spellcheck="false"
+                style="width: 250px; height: 200px;"
+            ></textarea>
         </div>
     </div>
     <div>
         Corpus:
         <div>
-            <textarea id="input" placeholder="Add some line delimited text here."></textarea>
+            <textarea 
+                id="input"
+                placeholder="Add some line delimited text here."
+                style="width: 250px; height: 200px;"
+            ></textarea>
         </div>
         <button type="button" onclick="generate()">Generate</button>
+        <input id="sample-target" type="number" value="50" style="width: 50px;">
+        <button type="button" onclick="sampleCachedLines()" id ="sample-button" style="display: none;">Sample again</button>
+        
+        <div style="margin-top: 32px">
+            <button type="button" onclick="insertDemoCorpus()">Demo Corpus (MarioKart track names)</button>
+        </div>
     </div>
     <script src="filtered-markov.js"></script>
     <script>
+        var cachedLines = [];
+        
         function generate() {
             "use strict";
             var input = document.getElementById("input");
-            var output = document.getElementById("output");
             var outputDiv = document.getElementById("output-div");
+            var sampleButton = document.getElementById("sample-button");
             
-            var result = FilteredMarkov.generate(input.value);
-            output.value = result;
+            cachedLines = FilteredMarkov.generateLines(input.value);
             
+            sampleCachedLines();
+            
+            sampleButton.style.display  = "inline-block";
             outputDiv.style.display  = "block";
+        }
+        
+        function sampleCachedLines() {
+            var output = document.getElementById("output");
+            var sampleTarget = document.getElementById("sample-target").value || 50;
+            
+            var samples = getSamples(cachedLines, sampleTarget);
+            
+            output.value = samples.join("\n");
+        }
+        
+        function getSamples(array, target) {
+            var length = array.length;
+            if (target >= length) {
+                return array.map(function(x) { return x; });
+            }
+            
+            var samples = [];
+            
+            for (var i = 0; i < target; i += 1) {
+                samples.push(array[Math.floor(Math.random() * length)]);
+            }
+            
+            return samples;
+        }
+        
+        function insertDemoCorpus() {
+            "use strict";
+            var input = document.getElementById("input");
+            
+            input.value = [
+                "Mario Circuit 1",
+                "Luigi Raceway",
+                "Peach Circuit",
+                "Luigi Circuit",
+                "Figure-8 Circuit",
+                "Luigi Circuit",
+                "Toad Circuit",
+                "Mario Kart Stadium",
+                "Donut Plains 1",
+                "Moo Moo Farm",
+                "Shy Guy Beach",
+                "Peach Beach",
+                "Yoshi Falls",
+                "Moo Moo Meadows",
+                "Daisy Hills",
+                "Water Park",
+                "Ghost Valley 1",
+                "Koopa Troopa Beach",
+                "Riverside Park",
+                "Baby Park",
+                "Cheep Cheep Beach",
+                "Mushroom Gorge",
+                "Cheep Cheep Lagoon",
+                "Sweet Sweet Canyon",
+                "Bowser Castle 1",
+                "Kalimari Desert",
+                "Bowser Castle 1",
+                "Dry Dry Desert",
+                "Luigi's Mansion",
+                "Toad's Factory",
+                "Shy Guy Bazaar",
+                "Thwomp Ruins",
+                "Mario Circuit 2",
+                "Choco Island 1",
+                "Toad's Turnpike",
+                "Mario Circuit",
+                "Mushroom Bridge",
+                "Desert Hills",
+                "Mario Circuit",
+                "Wuhu Loop",
+                "Mario Circuit",
+                "Ghost Valley 2",
+                "Frappe Snowland",
+                "Boo Lake",
+                "Mario Circuit",
+                "Delfino Square",
+                "Coconut Mall",
+                "Mario Circuit",
+                "Toad Harbor",
+                "Donut Plains 2",
+                "Choco Mountain",
+                "Cheese Land",
+                "Daisy Cruiser",
+                "Waluigi Pinball",
+                "DK Summit",
+                "Music Park",
+                "Twisted Mansion",
+                "Bowser Castle 2",
+                "Mario Raceway",
+                "Bowser Castle 2",
+                "Waluigi Stadium",
+                "Shroom Ridge",
+                "Wario's Gold Mine",
+                "Rock Rock Mountain",
+                "Shy Guy Falls",
+                "Mario Circuit 3",
+                "Koopa Beach 1",
+                "Wario Stadium",
+                "Snow Land",
+                "Sherbet Land",
+                "DK Pass",
+                "Daisy Circuit",
+                "Piranha Plant Slide",
+                "Sunshine Airport",
+                "Choco Island 2",
+                "Sherbet Land",
+                "Ribbon Road",
+                "Mushroom City",
+                "Tick Tock Clock",
+                "Koopa Cape",
+                "Wario Shipyard",
+                "Dolphin Shoals",
+                "Vanilla Lake 1",
+                "Royal Raceway",
+                "Yoshi Desert",
+                "Yoshi Circuit",
+                "Mario Circuit",
+                "Maple Treeway",
+                "Neo Bowser City",
+                "Electrodrome",
+                "Bowser Castle 3",
+                "Bowser's Castle",
+                "Bowser Castle 3",
+                "DK Mountain",
+                "Airship Fortress",
+                "Grumble Volcano",
+                "Maka Wuhu",
+                "Mount Wario",
+                "Mario Circuit 4",
+                "Donut Plains 3",
+                "D.K.'s Jungle Parkway",
+                "Lakeside Park",
+                "Wario Colosseum",
+                "Wario Stadium",
+                "Dry Dry Ruins",
+                "DK Jungle",
+                "Cloudtop Cruise",
+                "Koopa Beach 2",
+                "Yoshi Valley",
+                "Broken Pier",
+                "Dino Dino Jungle",
+                "Peach Gardens",
+                "Moonview Highway",
+                "Rosalina's Ice World",
+                "Bone Dry Dunes",
+                "Ghost Valley 3",
+                "Banshee Boardwalk",
+                "Bowser Castle 4",
+                "Bowser's Castle",
+                "Bowser's Castle",
+                "Bowser's Castle",
+                "Bowser's Castle",
+                "Bowser's Castle",
+                "Vanilla Lake 2",
+                "Rainbow Road",
+                "Rainbow Road",
+                "Rainbow Road",
+                "Rainbow Road",
+                "Rainbow Road",
+                "Rainbow Road",
+                "Rainbow Road",
+                "Rainbow Road",
+                "Excitebike Arena",
+                "Dragon Driftway",
+                "Mute City",
+                "Ice Ice Outpost",
+                "Hyrule Circuit",
+                "Wild Woods",
+                "Animal Crossing",
+                "Super Bell Subway",
+                "Big Blue"
+            ].join("\n");
         }
     </script>
 </body>
