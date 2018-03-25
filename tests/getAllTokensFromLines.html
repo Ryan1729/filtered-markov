@@ -1,0 +1,54 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+
+    <title>Filtered Markov Test</title>
+</head>
+
+<body>
+    <div>
+        Result:
+        <div>
+            <textarea id="output"></textarea>
+        </div>
+    </div>
+    Expected Result:
+        <div>
+            <textarea id="expected">
+                [
+                    ["A", "B", "C"],
+                    ["1", "2", "3"]
+                ]
+            </textarea>
+        </div>
+    <div>
+        Test Data:
+        <div>
+            <textarea id="input">
+                [
+                    "A 1",
+                    "B 2",
+                    "C 3"
+                ]
+            </textarea>
+        </div>
+        <button type="button" onclick="test_getAllTokensFromLines()">Test getAllTokensFromLines</button>
+    </div>
+    <script src="../filtered-markov.js"></script>
+    <script>
+        function test_getAllTokensFromLines() {
+            "use strict";
+            var input = document.getElementById("input");
+            var output = document.getElementById("output");
+            
+            var result = FilteredMarkov.getAllTokensFromLines(
+                JSON.parse(input.value),
+            );
+            
+            output.value = JSON.stringify(result);
+        }
+    </script>
+</body>
+</html>
