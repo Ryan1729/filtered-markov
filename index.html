@@ -19,6 +19,21 @@
         <div>
             <textarea id="input" placeholder="Add some line delimited text here."></textarea>
         </div>
+        <button type="button" onclick="generate()">Generate</button>
     </div>
+    <script src="filtered-markov.js"></script>
+    <script>
+        function generate() {
+            "use strict";
+            var input = document.getElementById("input");
+            var output = document.getElementById("output");
+            var outputDiv = document.getElementById("output-div");
+            
+            var result = FilteredMarkov.generate(input.value);
+            output.value = result;
+            
+            outputDiv.style.display  = "block";
+        }
+    </script>
 </body>
 </html>
