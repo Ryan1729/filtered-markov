@@ -130,5 +130,6 @@ var FilteredMarkov = (function() {
         generateGraph: generateGraph,
         getGraphFromTokens: getGraphFromTokens,
         getAllTokensFromLines: getAllTokensFromLines,
+        dedupStringArrayAndReturnSet: dedupStringArrayAndReturnSet,
     }
 }())
