@@ -32,7 +32,7 @@
         </div>
         <button type="button" onclick="generate()">Generate</button>
         <input id="sample-target" type="number" value="50" style="width: 50px;">
-        <button type="button" onclick="sampleCachedLines()" id ="sample-button" style="display: none;">Sample again</button>
+        <button type="button" onclick="sampleCachedGraph()" id ="sample-button" style="display: none;">Sample again</button>
         
         <div style="margin-top: 32px">
             <button type="button" onclick="insertDemoCorpus()">Demo Corpus (MarioKart track names)</button>
@@ -40,7 +40,7 @@
     </div>
     <script src="filtered-markov.js"></script>
     <script>
-        var cachedLines = [];
+        var cachedGraph = {};
         
         function generate() {
             "use strict";
@@ -48,33 +48,28 @@
             var outputDiv = document.getElementById("output-div");
             var sampleButton = document.getElementById("sample-button");
             
-            cachedLines = FilteredMarkov.generateLines(input.value);
+            cachedGraph = FilteredMarkov.graphFromString(input.value);
             
-            sampleCachedLines();
+            sampleCachedGraph();
             
             sampleButton.style.display  = "inline-block";
             outputDiv.style.display  = "block";
         }
         
-        function sampleCachedLines() {
+        function sampleCachedGraph() {
             var output = document.getElementById("output");
             var sampleTarget = document.getElementById("sample-target").value || 50;
             
-            var samples = getSamples(cachedLines, sampleTarget);
+            var samples = getSamples(cachedGraph, sampleTarget);
             
             output.value = samples.join("\n");
         }
         
-        function getSamples(array, target) {
-            var length = array.length;
-            if (target >= length) {
-                return array.map(function(x) { return x; });
-            }
-            
+        function getSamples(graph, target) {
             var samples = [];
             
             for (var i = 0; i < target; i += 1) {
-                samples.push(array[Math.floor(Math.random() * length)]);
+                samples.push(FilteredMarkov.sampleLineFromGraph(graph));
             }
             
             return samples;

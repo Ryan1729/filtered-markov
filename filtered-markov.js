@@ -3,7 +3,7 @@ var FilteredMarkov = (function() {
     var generate = function(inputString) {
         return generateLines(inputString).join("\n");
     };
-    
+
     var generateLines = function(inputString) {
         var lines = inputString.split(/\r?\n/);
         
@@ -12,15 +12,20 @@ var FilteredMarkov = (function() {
         var lineSet = bundle.set;
         var linesWithoutDuplicates = bundle.array;
         
-        var graph = generateGraph(linesWithoutDuplicates);
+        var graph = getGraphFromTokens(getAllTokensFromLines(linesWithoutDuplicates));
         
         var resultLines = graphToLines(graph, lineSet);
         
         return resultLines;
     }
-    
+
     var graphToString = function(graph, linesSet) {
         return graphToLines(graph, linesSet).join("\n");
+    };
+    
+    var graphFromString = function(inputString) {
+        var lines = inputString.split(/\r?\n/);
+        return generateGraph(lines);
     };
     
     var graphToLines = function(graph, linesSet) {
@@ -32,7 +37,7 @@ var FilteredMarkov = (function() {
             return !linesSet[line];
         });
     }
-    
+
     var graphToLinesHelper = function (graph, prefix, result) {
         if (!graph || graph.length <= 0) {
             result.push(prefix);
@@ -52,8 +57,31 @@ var FilteredMarkov = (function() {
     }
     
     var generateGraph = function(lines) {
-        return getGraphFromTokens(getAllTokensFromLines(lines));
+        var bundle = dedupStringArrayAndReturnSet(lines);
+        return getGraphFromTokens(getAllTokensFromLines(bundle.array));
     };
+    
+    var sampleLineFromGraph = function(graph, randomFloat01) {
+        if (!randomFloat01) {
+            randomFloat01 = Math.random
+        }
+        return sampleLineFromGraphHelper(graph, randomFloat01, "")
+    }
+    
+    var sampleLineFromGraphHelper = function (graph, randomFloat01, prefix) {
+        if (!graph || graph.length <= 0) {
+            return prefix;
+        }
+        
+        var child = graph[Math.floor(randomFloat01() * graph.length)];
+        
+        var newPrefix = prefix 
+            ?   prefix + " " + child.value
+            :   child.value;
+        
+        
+        return sampleLineFromGraphHelper(child.children, randomFloat01, newPrefix)
+    }
     
     var getAllTokensFromLines = function (lines) {
         var allTokens = [];
@@ -125,11 +153,13 @@ var FilteredMarkov = (function() {
     return {
         generate: generate,
         generateLines: generateLines,
-        graphToString, graphToString,
-        graphToLines, graphToLines,
+        graphToString: graphToString,
+        graphFromString: graphFromString,
+        graphToLines: graphToLines,
         generateGraph: generateGraph,
         getGraphFromTokens: getGraphFromTokens,
         getAllTokensFromLines: getAllTokensFromLines,
         dedupStringArrayAndReturnSet: dedupStringArrayAndReturnSet,
+        sampleLineFromGraph: sampleLineFromGraph,
     }
 }())
