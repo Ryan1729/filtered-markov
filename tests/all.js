@@ -33,6 +33,10 @@ C 3
     for (const line of expectedLines) {
         assert(samples[line], "line was missing")
     }
+
+    for (const line of Object.keys(samples)) {
+        assert(expectedLines.indexOf(line) >= 0, "extra line was generated: " + line)
+    }
 })
 
 it(() => {
@@ -51,6 +55,10 @@ C 3
     
     for (const line of expectedLines) {
         assert(samples[line], "line was missing")
+    }
+
+    for (const line of Object.keys(samples)) {
+        assert(expectedLines.indexOf(line) >= 0, "extra line was generated")
     }
 })
 
