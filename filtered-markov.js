@@ -4,9 +4,26 @@ var FilteredMarkov = (function() {
     var graphFromString = function(inputString) {
         var lines = inputString.split(/\r?\n/);
 
+        let allTokens = [];
+        const linesSet = {}
+
+        for (var i = 0; i < lines.length; i += 1) {
+            var line = lines[i];
+
+            var tokens = line.split(/\s+/).filter(function (token){
+                return token.length > 0;
+            });
+
+            linesSet[tokens.join(" ")] = 1
+
+            addTokens(allTokens, tokens);
+        }
+
+        allTokens = allTokens.map(dedupStringArray);
+
         return {
-            lines,
-            allTokens: getAllTokensFromLines(lines)
+            linesSet,
+            allTokens,
         };
     };
 
@@ -19,8 +36,7 @@ var FilteredMarkov = (function() {
         for (let i = 0; i < TRIES; i += 1) {
             const line = sampleLineFromGraphUnfiltered(graph, randomFloat01)
 
-            // TODO build hashset of normalized lines
-            if (graph.lines.indexOf(line) === -1) {
+            if (!graph.linesSet[line]) {
                 return line
             }
         }

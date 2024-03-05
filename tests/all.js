@@ -62,6 +62,29 @@ C 3
     }
 })
 
+it(() => {
+    const input = `A\t1
+B\t1
+C\t3
+`
+    const graph = FilteredMarkov.graphFromString(input)
+
+    const samples = {}
+    for (var i = 0; i < 100; i += 1) {
+        samples[FilteredMarkov.sampleLineFromGraph(graph)] = 1;
+    }
+    
+    const expectedLines = ["A 3", "B 3", "C 1"]
+    
+    for (const line of expectedLines) {
+        assert(samples[line], "line was missing")
+    }
+
+    for (const line of Object.keys(samples)) {
+        assert(expectedLines.indexOf(line) >= 0, "extra line was generated")
+    }
+})
+
 // test runner
 for (const test of allTests) {
     test()
